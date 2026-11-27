@@ -20,15 +20,26 @@ jobs:
           npx create-expo-app@latest MyTempApp --template blank --yes
           cp App.js MyTempApp/App.js
           cd MyTempApp
+          node -e '
+            const fs = require("fs");
+            const cfg = JSON.parse(fs.readFileSync("app.json", "utf8"));
+            cfg.expo.name = "MyTempApp";
+            cfg.expo.slug = "mytempapp";
+            cfg.expo.ios = { ...(cfg.expo.ios || {}), bundleIdentifier: "com.timberlines.app" };
+            fs.writeFileSync("app.json", JSON.stringify(cfg, null, 2));
+          '
           npx expo install react-native-reanimated
-          npx expo prebuild --platform ios --no-install
+          CI=1 npx expo prebuild --platform ios --no-install
+          ls -la ios
 
       - name: Build .app for iOS Simulator
         run: |
           cd MyTempApp
+          WORKSPACE=$(ls -d ios/*.xcworkspace | head -n 1)
+          SCHEME=$(basename "$WORKSPACE" .xcworkspace)
           xcodebuild \
-            -workspace ios/MyTempApp.xcworkspace \
-            -scheme MyTempApp \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
             -configuration Release \
             -sdk iphonesimulator \
             -derivedDataPath build \
@@ -38,4 +49,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MyiPhoneApp
-          path: MyTempApp/build/Build/Products/Release-iphonesimulator/MyTempApp.app
+          path: MyTempApp/build/Build/Products/Release-iphonesimulator/*.app
