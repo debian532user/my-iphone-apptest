@@ -28,8 +28,7 @@ jobs:
             cfg.expo.ios = { ...(cfg.expo.ios || {}), bundleIdentifier: "com.timberlines.app" };
             fs.writeFileSync("app.json", JSON.stringify(cfg, null, 2));
           '
-          npx expo install react-native-reanimated
-          CI=1 npx expo prebuild --platform ios --no-install
+          CI=1 npx expo prebuild --platform ios --no-install --npm
           ls -la ios
 
       - name: Build .app for iOS Simulator
