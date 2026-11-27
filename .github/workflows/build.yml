@@ -28,13 +28,16 @@ jobs:
             cfg.expo.ios = { ...(cfg.expo.ios || {}), bundleIdentifier: "com.timberlines.app" };
             fs.writeFileSync("app.json", JSON.stringify(cfg, null, 2));
           '
-          CI=1 npx expo prebuild --platform ios --no-install
+          npm install
+          CI=1 npx expo prebuild --platform ios
+          ls -la
           ls -la ios
 
       - name: Build .app for iOS Simulator
         run: |
           cd MyTempApp
           WORKSPACE=$(ls -d ios/*.xcworkspace | head -n 1)
+          echo "Found workspace: $WORKSPACE"
           SCHEME=$(basename "$WORKSPACE" .xcworkspace)
           xcodebuild \
             -workspace "$WORKSPACE" \
