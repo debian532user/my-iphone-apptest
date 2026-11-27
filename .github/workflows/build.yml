@@ -13,7 +13,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Create Expo template and inject App.js
         run: |
@@ -28,7 +28,7 @@ jobs:
             cfg.expo.ios = { ...(cfg.expo.ios || {}), bundleIdentifier: "com.timberlines.app" };
             fs.writeFileSync("app.json", JSON.stringify(cfg, null, 2));
           '
-          CI=1 npx expo prebuild --platform ios --no-install --npm
+          CI=1 npx expo prebuild --platform ios --no-install
           ls -la ios
 
       - name: Build .app for iOS Simulator
